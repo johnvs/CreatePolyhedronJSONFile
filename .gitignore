@@ -1,5 +1,5 @@
 # Application documentation
-*.json
+data/*.json
 
 ### OSX ###
 .DS_Store
