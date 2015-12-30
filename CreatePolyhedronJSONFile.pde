@@ -1,82 +1,67 @@
 /**
  * This program generates/transfers two sets of data, that define a polyhedron, to
  * a file in the JSON format.
- * First, it generates the coordinates for the verticies of the polyhedron.
- * Then it stores those coordinates and groups of verticies that define the 
+ * First, it generates the coordinates for the vertices of the polyhedron.
+ * Then it stores those coordinates and groups of vertices that define the 
  * faces of the polyhedron.
  *
  * Here is what the JSON looks like (partial):
  *
-{
-  "coordinates": [
+
+[
+  [
     {
-      "x": 0.0,
-      "y": "0.288742191"
-      "z": "0.745624566"
+      "x": -0.5,
+      "y": 0.28867512941360474,
+      "z": 0.40824830532073975
     },
     {
-      "x": 0.0,
-      "y": "0.288742191"
-      "z": "0.745624566"
+      "x": -0.5,
+      "y": -0.28867512941360474,
+      "z": -0.40824830532073975
+    },
+    {
+      "x": -1,
+      "y": 0.5773502588272095,
+      "z": -0.40824830532073975
     }
   ],
-  "verticies": [
+  [
     {
-      "v1": 3,
-      "v2": 11,
-      "v3": 7
+      "x": -0.5,
+      "y": -0.28867512941360474,
+      "z": -0.40824830532073975
     },
     {
-      "v1": 3,
-      "v2": 11,
-      "v3": 7
-    }
-  ]
-}
-
-{
-  "face": [
+      "x": 0,
+      "y": 0.5773502588272095,
+      "z": -0.40824830532073975
+    },
     {
-      "v1": [
-        {
-          "x": 0.0,
-          "y": "0.288742191",
-          "z": "0.745624566"
-        }
-      ],
-      "v2": [
-        {
-          "x": 0.0,
-          "y": "0.288742191",
-          "z": "0.745624566"
-        }
-      ],
-      "v3": [
-        {
-          "x": 0.0,
-          "y": "0.288742191",
-          "z": "0.745624566"
-        }
-      ]
+      "x": -1,
+      "y": 0.5773502588272095,
+      "z": -0.40824830532073975
     }
   ]
+]
+
 }
 
 */
 
 private float edgeLength;
 private float edgeLengthHalf;
-private  float radius1;
-private  float radius2Minor;
-private  float radius2Major;
-private  float hgt;
-private  float hgtHalf;
-private  float hgtThreeHalves;
+private float radius1;
+private float radius2Minor;
+private float radius2Major;
+private float hgt;
+private float hgtHalf;
+private float hgtThreeHalves;
 
-private final int NUM_VERTICIES = 14;
-private PVector[] vertexCoords = new PVector[NUM_VERTICIES];  // Stores the coordinates of all the verticies
+private final int NUM_VERTICES = 14;
+private PVector[] vertexCoords = new PVector[NUM_VERTICES];  // Stores the coordinates of all the vertices
 
-private int[][] vertexGroup = 
+private int[][] faces = 
   { 
     { 3, 11,  7}, {11, 10,  7}, {10,  3,  7}, 
     { 2, 10,  9}, {10, 12,  9}, {12,  2,  9}, 
@@ -130,40 +115,33 @@ void generateData(int edgeLen) {
 
 void createFile() {
   
-  // Create a new coordinate JSON array
-  JSONArray coordJArray = new JSONArray();
+  // Create the outer (faces) JSON array
+  JSONArray facesJsonArray = new JSONArray();
 
-  // Create the vertex coordinates JSON objects
-  for (int i = 0; i < vertexCoords.length; ++i) {
-    JSONObject newCoordinate = new JSONObject();
-    newCoordinate.setFloat("x", vertexCoords[i].x);
-    newCoordinate.setFloat("y", vertexCoords[i].y);
-    newCoordinate.setFloat("z", vertexCoords[i].z);
-
-    coordJArray.setJSONObject(i, newCoordinate);
-  }
-  
-  JSONObject polyhedron = new JSONObject();
-  polyhedron.setJSONArray("verticies", coordJArray);
-
-  // Create a new vertex JSON array 
-  JSONArray vertexJArray = new JSONArray();
-  
   // Write the face vertex data to the file
-  for (int i = 0; i < vertexGroup.length; ++i) {
-    JSONObject newVertex = new JSONObject();
-    newVertex.setInt("v1", vertexGroup[i][0]);
-    newVertex.setInt("v2", vertexGroup[i][1]);
-    newVertex.setInt("v3", vertexGroup[i][2]);
+  for (int i = 0; i < faces.length; ++i) {
 
-    vertexJArray.setJSONObject(i, newVertex);
+    // Create the inner (vertices) JSON array
+    JSONArray vertexJSONArray = new JSONArray();
+    
+    // For each face vertex, create and fill the JSON coordinate object
+    for (int j = 0; j < faces[i].length; ++j) {
+      JSONObject coordJSONObj = new JSONObject();
+      
+      coordJSONObj.setFloat("x", vertexCoords[faces[i][j]].x);
+      coordJSONObj.setFloat("y", vertexCoords[faces[i][j]].y);
+      coordJSONObj.setFloat("z", vertexCoords[faces[i][j]].z);
+
+      // Add the coordinate object to the vertex array
+      vertexJSONArray.setJSONObject(j, coordJSONObj);
+    }
+    
+    // Add the vertex array to the faces array
+    facesJsonArray.setJSONArray(i, vertexJSONArray);
   }
-
-  polyhedron.setJSONArray("faces", vertexJArray);
 
   // Write the coordinate data to the file.
-  saveJSONObject(polyhedron, "data/tetrahedron.json");  
-  
+  saveJSONArray(facesJsonArray, "data/tetrahedron.json");
 }
 
 /*
@@ -177,7 +155,7 @@ void loadData() {
   json = loadJSONObject("data.json");
 
   JSONArray coordData = json.getJSONArray("coordinates");
-  JSONArray vertexData = json.getJSONArray("verticies");
+  JSONArray vertexData = json.getJSONArray("vertices");
 
   // The size of the array of Coordinate objects is determined by the total number of  
   // elements named "coordinate"
