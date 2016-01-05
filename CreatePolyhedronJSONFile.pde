@@ -49,6 +49,7 @@
 
 */
 
+/*
 private float edgeLength;
 private float edgeLengthHalf;
 private float radius1;
@@ -72,16 +73,21 @@ private int[][] faces =
     {10,  2,  6}, { 2,  3,  6}, { 3, 10,  6}, 
     {10, 11, 13}, {11, 12, 13}, {12, 10, 13} 
   };
+*/
+
+private Tetrahedron tetrahedron;
 
 void setup() {
   size(100, 100);
-  generateData(1);
-  createFile();
+  tetrahedron = new Tetrahedron();
+  tetrahedron.generateData(1);
+  tetrahedron.createFile();
 }
 
 void draw() {
 }
 
+/*
 void generateData(int edgeLen) {
   
   edgeLength = edgeLen;                   // 1.0
@@ -143,6 +149,7 @@ void createFile() {
   // Write the coordinate data to the file.
   saveJSONArray(facesJsonArray, "data/tetrahedron.json");
 }
+*/
 
 /*
 void loadData() {
