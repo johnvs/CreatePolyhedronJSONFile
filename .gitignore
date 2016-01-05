@@ -1,5 +1,6 @@
 # Application documentation
 data/*.json
+Vertex_Coords.graffle
 
 ### OSX ###
 .DS_Store
