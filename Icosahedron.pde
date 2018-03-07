@@ -63,14 +63,7 @@ class Icosahedron {
       {11,  6,  9}, {11,  9, 10}, {10,  9,  7}, {10,  7,  4}, {10,  4,  8}
     };
 
-  // private float edgeLength;
   private float edgeLengthHalf;
-  // private float phiHalf;
-  // private float radius2Minor;
-  // private float radius2Major;
-  // private float hgt;
-  // private float hgtHalf;
-  // private float hgtThreeHalves;
 
   private PVector[] vertexCoords;  // Stores the coordinates of all the vertices
 
