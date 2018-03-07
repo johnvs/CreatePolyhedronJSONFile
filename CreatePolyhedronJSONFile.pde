@@ -16,8 +16,14 @@ private Dodecahedron dodecahedron;
 
 void setup() {
   size(100, 100);
+
   dodecahedron = new Dodecahedron(1.0);
+
+  PVector xFormation = new PVector(0, 0, 0);  // Rotation about the x, y and z axes, in radians
+  applyTransformation(dodecahedron, xFormation);
+
   dodecahedron.createFile();
+
   // octahedron = new Octahedron(1.0);
   // octahedron.createFile();
   // tetrahedron = new Tetrahedron(1.0);
@@ -28,6 +34,38 @@ void setup() {
 }
 
 void draw() {
+}
+
+void applyTransformation(Dodecahedron shape, PVector xform) {
+
+  PVector[] coords = shape.getVertexCoords();
+
+  // Apply the transformation to each vertex
+  for (int i = 0; i < coords.length; i++) {
+
+    // Rotate about the X axis
+    float hyp = sqrt( (coords[i].y * coords[i].y) + (coords[i].z * coords[i].z) );
+    float alpha = acos(coords[i].z / hyp);  // Returns a value of 0 - PI
+
+    // If vertical axis is neg, adjust angle
+    // Convert angle from 0 - PI to 0 - TWO_PI
+    if (coords[i].y < 0) {
+      alpha = TWO_PI - alpha;
+    }
+
+    // xform should be between +/- TWO_PI
+    alpha += xform.z;
+
+    // float z = cos(alpha);
+    // float y = sin(alpha);
+
+    coords[i].z = cos(alpha);
+    coords[i].y = sin(alpha);
+
+  }
+
+  shape.setVertexCoords(coords);
+
 }
 
 /*
